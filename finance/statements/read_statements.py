@@ -8,6 +8,7 @@ import subprocess
 class Bank: # interface
     def __init__(self):
         self.filenames = []
+        self.encoding = "utf8"
 
     def readCsvFile(self, filename):
         print("TODO: %s has to implement readCsvFile(...)" % self.__class__)
@@ -15,14 +16,15 @@ class Bank: # interface
 class Sparkasse(Bank):
     def __init__(self):
         args = [self]
-        # TODO: bank specific members
         Bank.__init__(*tuple(args))
+        # bank specific members
+        self.encoding = "cp1252"
 
     def readCsvFile(self, filename):
         print("reading \"%s\" ..." % filename)
         # we assume the CSV file to be cp1252 encoded (see
         # http://en.wikipedia.org/wiki/Windows-1252)
-        iFile = open(filename, "r", encoding = "cp1252")
+        iFile = open(filename, "r", encoding = self.encoding)
         lineNumber = 0
         while 1:
             lineNumber = lineNumber + 1
@@ -37,8 +39,9 @@ class Sparkasse(Bank):
 class HSBC(Bank):
     def __init__(self):
         args = [self]
-        # TODO: bank specific members
         Bank.__init__(*tuple(args))
+        # TODO: bank specific members
+        self.encoding = "utf8"
 
 def checkBank(filename):
     bank = None
@@ -73,7 +76,7 @@ if __name__ == "__main__":
         print("TODO: HSBC")
     # HSBC
     for word in words:
-        print("reading \"%s\" ..." % str(word, encoding='utf8'))
+        print("reading \"%s\" ..." % str(word, encoding = 'utf8'))
         iFile = open(word, "r")
         # read CSV file line by line
         lineNumber = 0
