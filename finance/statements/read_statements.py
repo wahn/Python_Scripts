@@ -1,5 +1,6 @@
 #!/opt/local/bin/python3.2
 
+import csv
 import sys
 import math
 import subprocess
@@ -16,6 +17,22 @@ class Sparkasse(Bank):
         args = [self]
         # TODO: bank specific members
         Bank.__init__(*tuple(args))
+
+    def readCsvFile(self, filename):
+        print("reading \"%s\" ..." % filename)
+        # we assume the CSV file to be cp1252 encoded (see
+        # http://en.wikipedia.org/wiki/Windows-1252)
+        iFile = open(filename, "r", encoding = "cp1252")
+        lineNumber = 0
+        while 1:
+            lineNumber = lineNumber + 1
+            line = iFile.readline()
+            if line == "":
+                # EOF
+                break
+            else:
+                print(line[:-1])
+        iFile.close()
 
 class HSBC(Bank):
     def __init__(self):
@@ -48,7 +65,8 @@ if __name__ == "__main__":
     bank = checkBank(words[0])
     if bank.__class__ == Sparkasse:
         print("TODO: Sparkasse")
-        for filename in words:
+        for word in words:
+            filename = str(word, encoding='utf8')
             bank.readCsvFile(filename)
         sys.exit()
     else:
