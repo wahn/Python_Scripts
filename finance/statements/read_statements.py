@@ -45,13 +45,16 @@ class Sparkasse(Bank):
                 if lineNumber == 1:
                     # TODO: deal with header
                     # ignore header for now
-                    pass
+                    print(line[:-1])
+                    ##pass
                 else:
                     print(line[:-1])
                     words = line[:-1].split(self.delimiter)
                     print(words)
                     date = self.convertDate(words[2])
                     print(date)
+                    who = words[5]
+                    print(who)
         iFile.close()
 
     def convertDate(self, date):
