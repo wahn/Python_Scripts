@@ -9,9 +9,17 @@ class Bank: # interface
     def __init__(self):
         self.filenames = []
         self.encoding = "utf8"
+        self.delimiter = ','
+        self.dates = {}
+        self.whos = {}
+        self.balance = 0.0
 
     def readCsvFile(self, filename):
         print("TODO: %s has to implement readCsvFile(...)" % self.__class__)
+
+    def convertDate(self, date):
+        print("TODO: %s has to implement convertDate(...)" % self.__class__)
+        return None
 
 class Sparkasse(Bank):
     def __init__(self):
@@ -19,6 +27,7 @@ class Sparkasse(Bank):
         Bank.__init__(*tuple(args))
         # bank specific members
         self.encoding = "cp1252"
+        self.delimiter = ';'
 
     def readCsvFile(self, filename):
         print("reading \"%s\" ..." % filename)
@@ -33,7 +42,16 @@ class Sparkasse(Bank):
                 # EOF
                 break
             else:
-                print(line[:-1])
+                if lineNumber == 1:
+                    # TODO: deal with header
+                    # ignore header for now
+                    pass
+                else:
+                    print(line[:-1])
+                    words = line[:-1].split(self.delimiter)
+                    print(words)
+                    date = self.convertDate(words[2])
+                    print(date)
         iFile.close()
 
 class HSBC(Bank):
@@ -42,6 +60,7 @@ class HSBC(Bank):
         Bank.__init__(*tuple(args))
         # TODO: bank specific members
         self.encoding = "utf8"
+        self.delimiter = ','
 
 def checkBank(filename):
     bank = None
