@@ -17,6 +17,10 @@ class Bank: # interface
     def readCsvFile(self, filename):
         print("TODO: %s has to implement readCsvFile(...)" % self.__class__)
 
+    def convertAmount(self, amount):
+        print("TODO: %s has to implement convertAmount(...)" % self.__class__)
+        return None
+
     def convertDate(self, date):
         print("TODO: %s has to implement convertDate(...)" % self.__class__)
         return None
@@ -55,7 +59,15 @@ class Sparkasse(Bank):
                     print(date)
                     who = words[5]
                     print(who)
+                    amount = self.convertAmount(words[8])
+                    print(amount)
         iFile.close()
+
+    def convertAmount(self, amount):
+        words = amount.split('"') # get rid of the enclosing '"'
+        words = words[1].split(',')
+        amount = '.'.join(words)
+        return amount
 
     def convertDate(self, date):
         words = date.split('"') # get rid of the enclosing '"'
