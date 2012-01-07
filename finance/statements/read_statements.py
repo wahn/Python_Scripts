@@ -13,6 +13,7 @@ class Bank: # interface
         self.dates = {}
         self.whos = {}
         self.balance = 0.0
+        self.currency = "Euro"
 
     def readCsvFile(self, filename):
         print("TODO: %s has to implement readCsvFile(...)" % self.__class__)
@@ -31,12 +32,14 @@ class Bank: # interface
         red = 31
         green = 32
         yellow = 33
+        cyan = 36
         # formating
         len_date = len("YYYY-MM-DD")
         len_amount = len("-1234.12")
         len_space = len(" ")
         len_fill = 0   # varies
         len_amount = 0 # varies
+        len_currency = len(self.currency)
         # print the collected data with color and formatting
         keys = list(self.dates.keys())
         keys.sort()
@@ -50,7 +53,8 @@ class Bank: # interface
                     amount = "\033[%s;%sm%.2f\033[0m" % (bright, red, amount)
                 else:
                     amount = "\033[%s;%sm%.2f\033[0m" % (bright, green, amount)
-                len_fill = 79 - len_date - 2 * len_space - len(who) - len_amount
+                len_fill = (79 - len_date - 2 * len_space - len(who) - 
+                            len_amount)
                 fill = " " * len_fill
                 date = "\033[%s;%sm%s\033[0m" % (bright, yellow, date)
                 print("%s %s%s %s" % (date, who, fill, amount))
@@ -62,16 +66,19 @@ class Bank: # interface
         if self.balance < 0.0:
             self.balance = "\033[%s;%sm%s\033[0m" % (bright, red, self.balance)
         else:
-            self.balance = "\033[%s;%sm%s\033[0m" % (bright, green, self.balance)
-        len_fill = 79 - len_date - 2 * len_space - len_amount
+            self.balance = "\033[%s;%sm%s\033[0m" % (bright, green, 
+                                                     self.balance)
+        len_fill = 79 - len_date - 2 * len_space - len_amount - len_currency
         fill = " " * len_fill
-        print("%s %s %s" % (date, fill, self.balance))
+        cyan_currency = "\033[%s;%sm%s\033[0m" % (bright, cyan, self.currency)
+        print("%s %s%s %s" % (date, fill, cyan_currency, self.balance))
 
 class Sparkasse(Bank):
     def __init__(self):
         args = [self]
         Bank.__init__(*tuple(args))
         # bank specific members
+        self.currency = "Euro"
         self.encoding = "cp1252"
         self.delimiter = ';'
         # Kontostand am 07.10.2011 **: 2.190,48 EUR
@@ -131,6 +138,7 @@ class HSBC(Bank):
         args = [self]
         Bank.__init__(*tuple(args))
         # TODO: bank specific members
+        self.currency = "GBP"
         self.encoding = "utf8"
         self.delimiter = ','
 
