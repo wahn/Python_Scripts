@@ -6,15 +6,22 @@ import subprocess
 
 class Bank: # interface
     def __init__(self):
-        pass
+        self.filenames = []
+
+    def readCsvFile(self, filename):
+        print("TODO: %s has to implement readCsvFile(...)" % self.__class__)
 
 class Sparkasse(Bank):
     def __init__(self):
-        pass
+        args = [self]
+        # TODO: bank specific members
+        Bank.__init__(*tuple(args))
 
 class HSBC(Bank):
     def __init__(self):
-        pass
+        args = [self]
+        # TODO: bank specific members
+        Bank.__init__(*tuple(args))
 
 def checkBank(filename):
     bank = None
@@ -41,6 +48,8 @@ if __name__ == "__main__":
     bank = checkBank(words[0])
     if bank.__class__ == Sparkasse:
         print("TODO: Sparkasse")
+        for filename in words:
+            bank.readCsvFile(filename)
         sys.exit()
     else:
         print("TODO: HSBC")
