@@ -57,10 +57,18 @@ class Sparkasse(Bank):
                     print(words)
                     date = self.convertDate(words[2])
                     print(date)
-                    who = words[5]
+                    who = words[5][1:-1] # get rid of the enclosing '"'
                     print(who)
                     amount = self.convertAmount(words[8])
                     print(amount)
+                    try:
+                        self.dates[date].append([who, amount])
+                    except KeyError:
+                        self.dates[date] = [[who, amount]]
+                    try:
+                        self.whos[who].append([who, amount])
+                    except KeyError:
+                        self.whos[who] = [[who, amount]]
         iFile.close()
 
     def convertAmount(self, amount):
