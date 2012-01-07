@@ -1,7 +1,33 @@
 #!/opt/local/bin/python3.2
 
+import sys
 import math
 import subprocess
+
+class Bank: # interface
+    def __init__(self):
+        pass
+
+class Sparkasse(Bank):
+    def __init__(self):
+        pass
+
+class HSBC(Bank):
+    def __init__(self):
+        pass
+
+def checkBank(filename):
+    bank = None
+    iFile = open(filename, "r")
+    try:
+        line = iFile.readline()
+    except UnicodeDecodeError:
+        bank = Sparkasse()
+        iFile.close()
+    else:
+        bank = HSBC()
+        iFile.close()
+    return bank
 
 if __name__ == "__main__":
     # collect info here
@@ -11,6 +37,14 @@ if __name__ == "__main__":
     # list CSV files
     byte_string = subprocess.check_output("ls *.csv", shell = True)
     words = byte_string.split()
+    # check which bank we are using
+    bank = checkBank(words[0])
+    if bank.__class__ == Sparkasse:
+        print("TODO: Sparkasse")
+        sys.exit()
+    else:
+        print("TODO: HSBC")
+    # HSBC
     for word in words:
         print("reading \"%s\" ..." % str(word, encoding='utf8'))
         iFile = open(word, "r")
