@@ -54,6 +54,15 @@ class Sparkasse(Bank):
                     print(date)
         iFile.close()
 
+    def convertDate(self, date):
+        words = date.split('"') # get rid of the enclosing '"'
+        words = words[1].split('.')
+        day = words[0]
+        month = words[1]
+        year = "20%s" % words[2]
+        date = "%s-%s-%s" % (year, month, day)
+        return date
+
 class HSBC(Bank):
     def __init__(self):
         args = [self]
