@@ -25,6 +25,48 @@ class Bank: # interface
         print("TODO: %s has to implement convertDate(...)" % self.__class__)
         return None
 
+    def printInfo(self):
+        # (see http://www.termsys.demon.co.uk/vtansi.htm#colors)
+        bright = 1
+        red = 31
+        green = 32
+        yellow = 33
+        # formating
+        len_date = len("YYYY-MM-DD")
+        len_amount = len("-1234.12")
+        len_space = len(" ")
+        len_fill = 0   # varies
+        len_amount = 0 # varies
+        # print the collected data with color and formatting
+        keys = list(self.dates.keys())
+        keys.sort()
+        for date in keys:
+            for who_amount in self.dates[date]:
+                who, amount = who_amount
+                amount = float(amount)
+                balance += amount
+                len_amount = len(str("%.2f" % amount))
+                if amount < 0.0:
+                    amount = "\033[%s;%sm%.2f\033[0m" % (bright, red, amount)
+                else:
+                    amount = "\033[%s;%sm%.2f\033[0m" % (bright, green, amount)
+                len_fill = 79 - len_date - 2 * len_space - len(who) - len_amount
+                fill = " " * len_fill
+                date = "\033[%s;%sm%s\033[0m" % (bright, yellow, date)
+                print("%s %s%s %s" % (date, who, fill, amount))
+        print("-" * 79)
+        balance = balance * 100.0 # pence
+        balance = math.floor(balance + 0.5)
+        balance = balance / 100.0 # pound
+        len_amount = len(str(balance))
+        if balance < 0.0:
+            balance = "\033[%s;%sm%s\033[0m" % (bright, red, balance)
+        else:
+            balance = "\033[%s;%sm%s\033[0m" % (bright, green, balance)
+        len_fill = 79 - len_date - 2 * len_space - len_amount
+        fill = " " * len_fill
+        print("%s %s %s" % (date, fill, balance))
+
 class Sparkasse(Bank):
     def __init__(self):
         args = [self]
@@ -122,6 +164,7 @@ if __name__ == "__main__":
         for word in words:
             filename = str(word, encoding='utf8')
             bank.readCsvFile(filename)
+        bank.printInfo()
         sys.exit()
     else:
         print("TODO: HSBC")
