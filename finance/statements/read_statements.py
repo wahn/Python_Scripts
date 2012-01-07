@@ -44,7 +44,7 @@ class Bank: # interface
             for who_amount in self.dates[date]:
                 who, amount = who_amount
                 amount = float(amount)
-                balance += amount
+                self.balance += amount
                 len_amount = len(str("%.2f" % amount))
                 if amount < 0.0:
                     amount = "\033[%s;%sm%.2f\033[0m" % (bright, red, amount)
@@ -55,17 +55,17 @@ class Bank: # interface
                 date = "\033[%s;%sm%s\033[0m" % (bright, yellow, date)
                 print("%s %s%s %s" % (date, who, fill, amount))
         print("-" * 79)
-        balance = balance * 100.0 # pence
-        balance = math.floor(balance + 0.5)
-        balance = balance / 100.0 # pound
-        len_amount = len(str(balance))
-        if balance < 0.0:
-            balance = "\033[%s;%sm%s\033[0m" % (bright, red, balance)
+        self.balance = self.balance * 100.0 # cent
+        self.balance = math.floor(self.balance + 0.5)
+        self.balance = self.balance / 100.0 # euro
+        len_amount = len(str(self.balance))
+        if self.balance < 0.0:
+            self.balance = "\033[%s;%sm%s\033[0m" % (bright, red, self.balance)
         else:
-            balance = "\033[%s;%sm%s\033[0m" % (bright, green, balance)
+            self.balance = "\033[%s;%sm%s\033[0m" % (bright, green, self.balance)
         len_fill = 79 - len_date - 2 * len_space - len_amount
         fill = " " * len_fill
-        print("%s %s %s" % (date, fill, balance))
+        print("%s %s %s" % (date, fill, self.balance))
 
 class Sparkasse(Bank):
     def __init__(self):
@@ -91,18 +91,14 @@ class Sparkasse(Bank):
                 if lineNumber == 1:
                     # TODO: deal with header
                     # ignore header for now
-                    print(line[:-1])
-                    ##pass
+                    pass
                 else:
-                    print(line[:-1])
                     words = line[:-1].split(self.delimiter)
-                    print(words)
                     date = self.convertDate(words[2])
-                    print(date)
                     who = words[5][1:-1] # get rid of the enclosing '"'
-                    print(who)
+                    if who == "":
+                        who = "%s %s" % (words[3][1:-1], words[4][1:-1])
                     amount = self.convertAmount(words[8])
-                    print(amount)
                     try:
                         self.dates[date].append([who, amount])
                     except KeyError:
@@ -160,7 +156,6 @@ if __name__ == "__main__":
     # check which bank we are using
     bank = checkBank(words[0])
     if bank.__class__ == Sparkasse:
-        print("TODO: Sparkasse")
         for word in words:
             filename = str(word, encoding='utf8')
             bank.readCsvFile(filename)
