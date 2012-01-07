@@ -74,6 +74,8 @@ class Sparkasse(Bank):
         # bank specific members
         self.encoding = "cp1252"
         self.delimiter = ';'
+        # Kontostand am 07.10.2011 **: 2.190,48 EUR
+        self.dates["2011-10-07"] = [["KONTOSTAND", 2190.48]]
 
     def readCsvFile(self, filename):
         print("reading \"%s\" ..." % filename)
