@@ -1,0 +1,68 @@
+Simple script to parse CSV files (which you should be able to get from
+your internet banking software) and print them with some color
+highlighting.
+
+The source.me file can be used to define two aliases:
+incoming: uses the color encoding to look for positive amounts
+outgoing: uses the color encoding to look for negative amounts
+
+Usage:
+# you might have to adjust the first line to make it find a Python 3.x
+# interpreter
+./read_statements.py
+
+This will read all CSV files within that directory and print something
+like this (example files are provided):
+
+reading "2011_12_22_example_statement.csv" ...
+reading "2012_01_07_example_statement.csv" ...
+2011-11-04 ADVICE CONFIRMS GBXYZ JAN WALTER                              100.00
+2011-11-09 PLUSNET PLC                                                   -49.99
+2011-11-10 CASH HSBC    NOV10 GRT PORTLND @14:13                         -50.00
+2011-11-14 OYSTER RENEW WEB                                              -20.00
+2011-11-14 LIDL UK LONDON                                                -10.57
+2011-11-14 THAMES WATER                                                  -67.63
+2011-11-17 OYSTER RENEW WEB                                              -10.00
+2011-11-20 CASH HSBC    NOV20 NOTT HILL GT@13:01                         -50.00
+2011-11-21 ISTANBUL MEZE LONDON                                          -23.00
+2011-11-25 OYSTER AUTOTOPUP                                              -20.00
+2011-11-25 SALARY                                                       1500.00
+2011-11-27 CASH RB SCOT NOV27 TESCO @12:06                              -100.00
+2011-11-29 LANDLORD RENT DEC 2011                                       -600.00
+2011-11-30 OYSTER AUTOTOPUP                                              -20.00
+2011-12-05 APPLE ITUNES STORE LONDON                                      -2.68
+2011-12-05 OYSTER AUTOTOPUP                                              -20.00
+2011-12-05 LIDL UK LONDON                                                -25.79
+2011-12-05 O2 UK PAY & GO SLOUGH                                         -10.00
+2011-12-05 PLUSNET PLC                                                    -8.23
+2011-12-10 CASH RB SCOT DEC10 TESCO @10:58                              -100.00
+2011-12-12 APPLE ITUNES STORE LONDON                                      -0.69
+2011-12-12 OYSTER AUTOTOPUP                                              -20.00
+2011-12-12 ISTANBUL MEZE LONDON                                          -17.00
+2011-12-16 LIDL UK LONDON                                                -26.51
+2011-12-19 APPLE ITUNES STORE LONDON                                     -13.48
+2011-12-19 OYSTER AUTOTOPUP                                              -20.00
+2011-12-19 ISTANBUL MEZE LONDON                                          -15.00
+2011-12-21 SALARY                                                       1500.00
+2011-12-22 CASH RB SCOT DEC22 TESCO @19:46                              -100.00
+2011-12-23 TESCO STORES                                                   -7.16
+2011-12-28 OYSTER AUTOTOPUP                                              -20.00
+2011-12-28 HEATHROW EXPRESS                                              -16.50
+2011-12-30 LANDLORD RENT JAN 2012                                       -600.00
+2012-01-03 BRITISH A LONDON                                             -120.40
+2012-01-03 HEATHROW EXPRESS                                              -16.50
+2012-01-04 PLUSNET PLC                                                   -25.98
+2012-01-05 O2 UK PAY & GO SLOUGH                                         -10.00
+-------------------------------------------------------------------------------
+2012-01-05                                                               882.89
+
+You can use simple Unix tools to look e.g. for your Oyster card purchases:
+outgoing | grep OYSTER
+2011-11-14 OYSTER RENEW WEB                                              -20.00
+2011-11-17 OYSTER RENEW WEB                                              -10.00
+2011-11-25 OYSTER AUTOTOPUP                                              -20.00
+2011-11-30 OYSTER AUTOTOPUP                                              -20.00
+2011-12-05 OYSTER AUTOTOPUP                                              -20.00
+2011-12-12 OYSTER AUTOTOPUP                                              -20.00
+2011-12-19 OYSTER AUTOTOPUP                                              -20.00
+2011-12-28 OYSTER AUTOTOPUP                                              -20.00
