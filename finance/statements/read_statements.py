@@ -55,6 +55,8 @@ class Bank: # interface
                     amount = "\033[%s;%sm%.2f\033[0m" % (bright, green, amount)
                 len_fill = (79 - len_date - 2 * len_space - len(who) - 
                             len_amount)
+                if (len_fill < 0):
+                    who = who[:len_fill]
                 fill = " " * len_fill
                 date = "\033[%s;%sm%s\033[0m" % (bright, yellow, date)
                 print("%s %s%s %s" % (date, who, fill, amount))
