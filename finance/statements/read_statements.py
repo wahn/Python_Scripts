@@ -3,10 +3,11 @@
 import csv
 import sys
 import math
+import argparse
 import subprocess
 
 class Bank: # interface
-    def __init__(self):
+    def __init__(self, args):
         self.filenames = []
         self.encoding = "utf8"
         self.delimiter = ','
@@ -14,6 +15,7 @@ class Bank: # interface
         self.whos = {}
         self.balance = 0.0
         self.currency = "Euro"
+        self.args = args
 
     def readCsvFile(self, filename):
         print("TODO: %s has to implement readCsvFile(...)" % self.__class__)
@@ -49,35 +51,51 @@ class Bank: # interface
                 amount = float(amount)
                 self.balance += amount
                 len_amount = len(str("%.2f" % amount))
-                if amount < 0.0:
-                    amount = "\033[%s;%sm%.2f\033[0m" % (bright, red, amount)
+                if args.use_no_colors:
+                    amount = "%.2f" % amount
                 else:
-                    amount = "\033[%s;%sm%.2f\033[0m" % (bright, green, amount)
+                    if amount < 0.0:
+                        amount = "\033[%s;%sm%.2f\033[0m" % (bright, red, 
+                                                             amount)
+                    else:
+                        amount = "\033[%s;%sm%.2f\033[0m" % (bright, green, 
+                                                             amount)
                 len_fill = (79 - len_date - 2 * len_space - len(who) - 
                             len_amount)
                 if (len_fill < 0):
                     who = who[:len_fill]
                 fill = " " * len_fill
-                date = "\033[%s;%sm%s\033[0m" % (bright, yellow, date)
+                if args.use_no_colors:
+                    date = "%s" % date
+                else:
+                    date = "\033[%s;%sm%s\033[0m" % (bright, yellow, date)
                 print("%s %s%s %s" % (date, who, fill, amount))
         print("-" * 79)
         self.balance = self.balance * 100.0 # cent
         self.balance = math.floor(self.balance + 0.5)
         self.balance = self.balance / 100.0 # euro
         len_amount = len(str(self.balance))
-        if self.balance < 0.0:
-            self.balance = "\033[%s;%sm%s\033[0m" % (bright, red, self.balance)
+        if args.use_no_colors:
+            self.balance = "%s" % self.balance
         else:
-            self.balance = "\033[%s;%sm%s\033[0m" % (bright, green, 
-                                                     self.balance)
+            if self.balance < 0.0:
+                self.balance = "\033[%s;%sm%s\033[0m" % (bright, red, 
+                                                         self.balance)
+            else:
+                self.balance = "\033[%s;%sm%s\033[0m" % (bright, green, 
+                                                         self.balance)
         len_fill = 79 - len_date - 2 * len_space - len_amount - len_currency
         fill = " " * len_fill
-        cyan_currency = "\033[%s;%sm%s\033[0m" % (bright, cyan, self.currency)
+        if args.use_no_colors:
+            cyan_currency = "%s" % self.currency
+        else:
+            cyan_currency = "\033[%s;%sm%s\033[0m" % (bright, cyan, 
+                                                      self.currency)
         print("%s %s%s %s" % (date, fill, cyan_currency, self.balance))
 
 class Sparkasse(Bank):
-    def __init__(self):
-        args = [self]
+    def __init__(self, cmd_line_args):
+        args = [self, cmd_line_args]
         Bank.__init__(*tuple(args))
         # bank specific members
         self.currency = "Euro"
@@ -136,8 +154,8 @@ class Sparkasse(Bank):
         return date
 
 class HSBC(Bank):
-    def __init__(self):
-        args = [self]
+    def __init__(self, cmd_line_args):
+        args = [self, cmd_line_args]
         Bank.__init__(*tuple(args))
         # TODO: bank specific members
         self.currency = "GBP"
@@ -177,20 +195,30 @@ class HSBC(Bank):
     def convertDate(self, date):
         return date
 
-def checkBank(filename):
+def checkBank(filename, args):
     bank = None
     iFile = open(filename, "r")
     try:
         line = iFile.readline()
     except UnicodeDecodeError:
-        bank = Sparkasse()
+        bank = Sparkasse(args)
         iFile.close()
     else:
-        bank = HSBC()
+        bank = HSBC(args)
         iFile.close()
     return bank
 
 if __name__ == "__main__":
+    # deal with arguments
+    description = ('Read some CSV files and print useful information ' +
+                   'read from them.')
+    parser = argparse.ArgumentParser(description = description)
+    parser.add_argument('-nc', dest = 'use_no_colors', 
+                        action = 'store_true', 
+                        help = 'use no colors ' +
+                        '(the default is to use colors during printing)')
+    args = parser.parse_args()
+    print("use_no_colors = %s" % args.use_no_colors)
     # collect info here
     dates = {}
     whos = {}
@@ -199,7 +227,7 @@ if __name__ == "__main__":
     byte_string = subprocess.check_output("ls *.csv", shell = True)
     words = byte_string.split()
     # check which bank we are using
-    bank = checkBank(words[0])
+    bank = checkBank(words[0], args)
     if bank.__class__ == Sparkasse:
         for word in words:
             filename = str(word, encoding='utf8')
