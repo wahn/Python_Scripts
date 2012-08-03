@@ -176,6 +176,12 @@ class HSBC(Bank):
                 break
             else:
                 words = line[:-1].split(self.delimiter)
+                if len(words) != 3:
+                    # repair lines which use delimiter in the middle word
+                    newWords = [words[0],
+                                self.delimiter.join(words[1:-1]),
+                                words[-1]]
+                    words = newWords
                 date = self.convertDate(words[0])
                 who = words[1]
                 amount = self.convertAmount(words[2])
