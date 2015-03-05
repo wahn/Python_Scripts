@@ -1,5 +1,5 @@
-all: quitter.py
+all: ui_quitter.py
 
-quitter.py: quitter.ui
+ui_quitter.py: quitter.ui
 	pyside-uic quitter.ui -o ui_quitter.py
 
